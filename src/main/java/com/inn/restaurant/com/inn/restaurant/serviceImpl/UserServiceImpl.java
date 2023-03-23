@@ -1,5 +1,7 @@
 package com.inn.restaurant.com.inn.restaurant.serviceImpl;
 
+import com.inn.restaurant.com.inn.restaurant.JWT.CustomerUserDetailsService;
+import com.inn.restaurant.com.inn.restaurant.JWT.JwtUtil;
 import com.inn.restaurant.com.inn.restaurant.constens.RestaurantConstants;
 import com.inn.restaurant.com.inn.restaurant.dao.UserDao;
 import com.inn.restaurant.com.inn.restaurant.model.User;
@@ -9,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -21,6 +26,15 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserDao userDao;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    CustomerUserDetailsService customerUserDetailsService;
+
+    @Autowired
+    JwtUtil jwtUtil;
 
     @Override
     public ResponseEntity<String> signUp(Map<String, String> requestMap) {
@@ -38,11 +52,12 @@ public class UserServiceImpl implements UserService {
             } else {
                 return RestaurantUtils.getResponseEntity(RestaurantConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return RestaurantUtils.getResponseEntity(RestaurantConstants.SOMENTHING_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
+        return RestaurantUtils.getResponseEntity(RestaurantConstants.SOMENTHING_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 
     private boolean validateSignUpMapO(Map<String, String> requestMap) {
         if (requestMap.containsKey("name") && requestMap.containsKey("contactNumber") && requestMap.containsKey("email") && requestMap.containsKey("password"))
@@ -61,4 +76,26 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
+    public ResponseEntity<String> login(Map<String, String> requestMap) {
+        log.info("Inside login");
+        try {
+Authentication auth = authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(requestMap.get("email"), requestMap.get("password")));
+        if (auth.isAuthenticated()){
+            if(customerUserDetailsService.getUserDetail().getStatus().equalsIgnoreCase("true")) {
+                //user approved de catre admin
+                return new ResponseEntity<String>("{\"token\":\"" + jwtUtil.generateToken(customerUserDetailsService.getUserDetail().getEmail(),
+                        customerUserDetailsService.getUserDetail().getRole()) + "\"}",HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<String>("{\"message\":\" "+ "Wait for admin approval."+"\"", HttpStatus.BAD_REQUEST );
+            }
+        }
+
+        } catch (Exception exception) {
+            log.error("{}", exception);
+        }
+        return new ResponseEntity<String>("{\"message\":\" "+ "Bad crededentials."+"\"", HttpStatus.BAD_REQUEST );
+    }
 }

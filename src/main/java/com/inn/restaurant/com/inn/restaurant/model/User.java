@@ -1,10 +1,10 @@
 package com.inn.restaurant.com.inn.restaurant.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 @NamedQuery(name = "User.findByEmailId", query = "select u from User u where u.email=:email")//de fiecare data cand ii dam un user ID acel id al emailullk o sa fie verificat in baza de date
