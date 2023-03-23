@@ -9,6 +9,11 @@ import java.io.Serializable;
 
 @NamedQuery(name = "User.findByEmailId", query = "select u from User u where u.email=:email")//de fiecare data cand ii dam un user ID acel id al emailullk o sa fie verificat in baza de date
                                                                                             //returneaza obiectul User
+@NamedQuery(name = "User.getAllUser", query = "select new com.inn.restaurant.com.inn.restaurant.wrapper.UserWrapper(u.id,u.name,u.email,u.contactNumber,u.status) from User u where u.role='user'") //creeem objectul de clasa
+
+@NamedQuery(name = "User.getAllAdmin", query = "select u.email from User u where u.role='admin'") //creeem objectul de clasa
+
+@NamedQuery(name = "User.updateStatus", query = "update User u set u.status=:status where u.id=:id")
 
 @Data
 //constructor
