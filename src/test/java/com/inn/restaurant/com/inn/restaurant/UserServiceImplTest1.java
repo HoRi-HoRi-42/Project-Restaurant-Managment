@@ -2,6 +2,7 @@ package com.inn.restaurant.com.inn.restaurant.serviceImpl;
 
 import com.inn.restaurant.com.inn.restaurant.dao.UserDao;
 import com.inn.restaurant.com.inn.restaurant.model.User;
+import com.inn.restaurant.com.inn.restaurant.restImpl.UserRestImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,11 +15,11 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceImplTest {
+class UserServiceImplTest1 {
 
     UserServiceImpl userService;
     @Mock
@@ -83,4 +84,6 @@ class UserServiceImplTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("{\"mesage\":\"Invalid Data\"}", response.getBody());
     }
+
+
 }

@@ -17,7 +17,7 @@ import java.io.Serializable;
 
 @Data
 //constructor
-@Entity
+@Entity//creaza tabelu
 @DynamicInsert
 @DynamicUpdate
 @Table(name = "user")

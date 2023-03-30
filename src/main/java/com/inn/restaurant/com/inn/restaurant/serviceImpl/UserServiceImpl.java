@@ -1,5 +1,6 @@
 package com.inn.restaurant.com.inn.restaurant.serviceImpl;
 
+import com.google.common.base.Strings;
 import com.inn.restaurant.com.inn.restaurant.JWT.CustomerUserDetailsService;
 import com.inn.restaurant.com.inn.restaurant.JWT.JwtFilter;
 import com.inn.restaurant.com.inn.restaurant.JWT.JwtUtil;
@@ -141,6 +142,7 @@ public class UserServiceImpl implements UserService {
         return RestaurantUtils.getResponseEntity(RestaurantConstants.SOMENTHING_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+
     private void sendMailToAllAdmin(String status, String user, List<String> allAdmin) {
         allAdmin.remove(jwtFilter.getCurrentUser());//scoate toti adminii, nu vrem sa trimitiem si la cel care a facut
         if (status != null && status.equalsIgnoreCase("true")) {
@@ -153,5 +155,45 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public ResponseEntity<String> checkToken() { //am implementat jwtToken
+        //daca vrem sa lovim fara token valid o sa dea 403, asta il folosesc cand plec de la o pagina la alta "pagina de user nu te lasa sa pleci la admin"
+        //verificam daca ii tot user
+        return RestaurantUtils.getResponseEntity("true", HttpStatus.INTERNAL_SERVER_ERROR);
 
+    }
+
+    @Override
+    public ResponseEntity<String> changePassword(Map<String, String> requestMap) {
+        try {
+            User userObj = userDao.findByEmail(jwtFilter.getCurrentUser());
+            if (!userObj.equals(null)) {
+                if (userObj.getPassword().equals(requestMap.get("oldPassword"))) {
+                    userObj.setPassword(requestMap.get("newPassword"));
+                    userDao.save(userObj);//doar parola o sa fie uptdatata
+                    return RestaurantUtils.getResponseEntity("Password uppdatated Succ", HttpStatus.OK);
+                }
+                return RestaurantUtils.getResponseEntity("Incorrect old passwod", HttpStatus.INTERNAL_SERVER_ERROR);
+
+            }
+            return RestaurantUtils.getResponseEntity(RestaurantConstants.SOMENTHING_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return RestaurantUtils.getResponseEntity(RestaurantConstants.SOMENTHING_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
+    @Override
+    public ResponseEntity<String> forgotPassword(Map<String, String> requestMap) {
+        try {
+            User user = userDao.findByEmail(requestMap.get("email"));
+            if (!Objects.isNull(user) && !Strings.isNullOrEmpty(user.getEmail()))
+                    emailUtils.forgotMail(user.getEmail(),"Credententials from REstaurant",user.getPassword());
+                return RestaurantUtils.getResponseEntity("Check your mail for credentials", HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return RestaurantUtils.getResponseEntity(RestaurantConstants.SOMENTHING_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

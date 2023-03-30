@@ -5,10 +5,11 @@ import org.springframework.http.ResponseEntity;
 
 //generic metode folosite pentru in fiecare clasa --metode de retur ID uri unice--
 public class RestaurantUtils {
-    private RestaurantUtils(){
+    private RestaurantUtils() {
 
     }
-    public static ResponseEntity<String> getResponseEntity(String respMesg, HttpStatus httpStatus){
-        return new ResponseEntity<String>("{\"mesage\":\""+respMesg+"\"}", httpStatus);
+
+    public static ResponseEntity<String> getResponseEntity(String respMesg, HttpStatus httpStatus) {
+        return new ResponseEntity<String>("{\"mesage\":\"" + respMesg + "\"}", httpStatus);
     }
 }

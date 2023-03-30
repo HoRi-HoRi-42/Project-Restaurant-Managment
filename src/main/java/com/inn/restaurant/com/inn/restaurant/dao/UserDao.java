@@ -23,4 +23,6 @@ public interface UserDao extends JpaRepository<User, Integer> {
 //ca sa mearga update si arunca exceptie
     Integer updateStatus(@Param("status") String status, @Param("id") Integer id);
 
+    User findByEmail(String email);//ii automatic implementata
+
 }
