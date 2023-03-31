@@ -7,5 +7,7 @@ public class RestaurantConstants {
 
     public static final String UNAUTHORIZED_ACCESS = "Unauthorized access.";
 
+    public static final String STORE_LOCATION = "D:\\Coader\\AN 3\\SEM@\\Steroid\\com.inn.restaurant\\bills";
+
 
 }
